@@ -1,0 +1,78 @@
+version: "3.8"
+services:
+  # Orion is the context broker
+  orion:
+    labels:
+      org.fiware: 'tutorial'
+    platform: linux/amd64
+    image: quay.io/fiware/orion-ld:1.6.0-pre-1615
+    hostname: orion
+    container_name: fiware-orion
+    depends_on:
+      - mongo-db
+    networks:
+      - default
+    ports:
+      - 1026:1026
+    command: -dbhost mongo-db -logLevel DEBUG -forwarding -experimental -wip entityMaps
+    healthcheck:
+      test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
+# Databases
+  mongo-db:
+    labels:
+      org.fiware: 'tutorial'
+    image: mongo:4.4
+    hostname: mongo-db
+    container_name: db-mongo
+    expose:
+      - 27017
+    ports:
+      - 27017:27017 # localhost:27017
+    networks:
+      - default
+# Quantum Leap is persisting Short Term History to Crate-DB
+  quantumleap:
+    labels:
+      org.fiware: 'tutorial'
+    image: orchestracities/quantumleap:1.0.0
+    hostname: quantumleap
+    container_name: fiware-quantumleap
+    depends_on:
+      - crate-db
+    networks:
+      - default
+    ports:
+      - 8668:8668
+    environment:
+      - CRATE_HOST=crate-db
+    healthcheck:
+      test: curl --fail -s http://quantumleap:${QUANTUMLEAP_PORT}/version || exit 1
+
+  crate-db:
+    labels:
+      org.fiware: 'tutorial'
+    image: crate:4.8.1
+    hostname: crate-db
+    container_name: db-crate
+    ports:
+      # Admin UI
+      - "4200:4200"
+      # Transport protocol
+      - "4300:4300"
+    command: crate -Cauth.host_based.enabled=false  -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*" -Cdiscovery.type=single-node
+    environment:
+      - CRATE_HEAP_SIZE=2g # see https://crate.io/docs/crate/howtos/en/latest/deployment/containers/docker.html#troubleshooting
+ 
+  # Other services
+  grafana:
+    labels:
+      org.fiware: 'tutorial'
+    image: grafana/grafana:8.5.27
+    container_name: grafana
+    depends_on:
+      - crate-db
+    ports:
+      - "3003:3000"
+    environment:
+      - GF_INSTALL_PLUGINS=orchestracities-map-panel,grafana-clock-panel,grafana-worldmap-panel
+
