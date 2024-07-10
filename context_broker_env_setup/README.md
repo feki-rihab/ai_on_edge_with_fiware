@@ -3,7 +3,8 @@
 This branch contains the setup for running an Orion Context Broker connected to a MongoDB instance using Docker Compose. The architecture is designed to facilitate easy deployment and management of the Context Broker and its database.
 
 ## Architecture
-![Architecture Diagram](Context_Broker_env_setup.drawio.png)
+![Architecture Diagram](architecture.png) 
+
 The architecture consists of two main components:
 - [**Orion-LD Context Broker**](https://fiware-orion.readthedocs.io/en/latest/): Acts as the central component for managing context information.
 - [**MongoDB**](https://www.mongodb.com/): Serves as the database for storing context data.
