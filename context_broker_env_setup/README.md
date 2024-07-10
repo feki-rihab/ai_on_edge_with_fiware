@@ -75,4 +75,3 @@ To stop the running containers:
     ```sh
     docker-compose down
     ```
-
