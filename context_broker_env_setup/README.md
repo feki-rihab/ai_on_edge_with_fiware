@@ -72,8 +72,9 @@ the docker-compose -d option runs containers in detached modes:
 ## Stopping the Setup
 
 To stop the running containers:
-    ```sh
-    curl http://localhost:${EXPOSED_PORT:-1026}/version
-    ```
 
+    ```sh
+    docker-compose down
+    ```
+    
 This setup is tested on MacBook Pro having an M3 chip.
