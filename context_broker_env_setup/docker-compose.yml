@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  # Orion is the context broker
+  orion:
+    platform: linux/amd64
+    image: quay.io/fiware/orion-ld:${ORION_LD_VERSION}
+    hostname: orion
+    container_name: fiware-orion
+    depends_on:
+      - mongo-db
+    networks:
+      - default
+    ports:
+      - "${EXPOSED_PORT:-1026}:${ORION_LD_PORT:-1026}"
+    command: -dbhost mongo-db -logLevel DEBUG -forwarding -experimental -wip entityMaps
+    healthcheck:
+      test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
+
+# MongoDB
+  mongo-db:
+    image: mongo:4.4
+    hostname: mongo-db
+    container_name: db-mongo
+    expose:
+      - ${MONGODB_PORT}
+    ports:
+      - ${MONGODB_PORT}:${MONGODB_PORT} # localhost:27017
+    networks:
+      - default
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
