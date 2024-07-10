@@ -66,6 +66,7 @@ To set up the environment, follow these steps:
 ## Stopping the Setup
 
 To stop the running containers, run:
+
     ```sh
     docker-compose down
     ```
