@@ -71,7 +71,7 @@ the docker-compose -d option runs containers in detached modes:
 
 ## Stopping the Setup
 
-To stop the running containers, run:
+To stop the running containers:
     ```sh
     docker-compose down
     ```
