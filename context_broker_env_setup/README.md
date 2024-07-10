@@ -58,6 +58,13 @@ To set up the environment, follow these steps:
     ```sh
     docker-compose up -d
     ```
+**Note:**
+the docker-compose -d option runs containers in detached modes:
+- It starts the containers specified in the docker-compose.yml file in the background.
+- The containers run in the background, freeing up the terminal.
+- Output from the containers is not displayed in the terminal.
+- The containers continue running even if you close the terminal session.
+
 4. To verify that the Orion Context Broker is running correctly:
     ```sh
     curl http://localhost:${EXPOSED_PORT:-1026}/version
@@ -66,7 +73,6 @@ To set up the environment, follow these steps:
 ## Stopping the Setup
 
 To stop the running containers, run:
-
     ```sh
     docker-compose down
     ```
