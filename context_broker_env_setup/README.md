@@ -61,7 +61,6 @@ To set up the environment, follow these steps:
 **Note:**
 the docker-compose -d option runs containers in detached modes:
 - It starts the containers specified in the docker-compose.yml file in the background.
-- The containers run in the background, freeing up the terminal.
 - Output from the containers is not displayed in the terminal.
 - The containers continue running even if you close the terminal session.
 
@@ -76,3 +75,4 @@ To stop the running containers, run:
     ```sh
     docker-compose down
     ```
+
