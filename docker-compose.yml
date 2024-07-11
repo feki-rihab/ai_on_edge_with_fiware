@@ -1,0 +1,43 @@
+  # Quantum Leap is persisting Short Term History to Crate-DB
+  # QuantumLeap is as an intermediary service that stores, queries, and retrieves time-series data
+  # QuantumLeap interacts with the Context Broker via port 8668
+  # QuantumLeap subscribes to the Context Broker to receive updates on context data changes
+  # QuantumLeap communicates with CreateDB via port 4200
+  # CreateDB serves as the time-series database where QuantumLeap stores the processed data. 
+
+
+version: "3.8"
+services:
+  quantumleap:
+    image: orchestracities/quantumleap:${QUANTUMLEAP_VERSION}
+    hostname: quantumleap
+    container_name: fiware-quantumleap
+    depends_on:
+      - crate-db
+    networks:
+      - default
+    ports:
+      - "${QUANTUMLEAP_PORT}:${QUANTUMLEAP_PORT}"
+    environment:
+      - CRATE_HOST=crate-db
+    healthcheck:
+      test: curl --fail -s http://quantumleap:${QUANTUMLEAP_PORT}/version || exit 1
+
+  #CrateDB
+  crate-db:
+    image: crate:${CRATE_VERSION}
+    hostname: crate-db
+    container_name: db-crate
+    ports:
+      # Admin UI
+      - "4200:4200"
+      # Transport protocol
+      - "4300:4300"
+    command: crate -Cauth.host_based.enabled=false  -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*" -Cdiscovery.type=single-node
+    environment:
+      - CRATE_HEAP_SIZE=2g # see https://crate.io/docs/crate/howtos/en/latest/deployment/containers/docker.html#troubleshooting
+    volumes:
+      - crate-db:/data
+
+volumes:
+  crate-db:
