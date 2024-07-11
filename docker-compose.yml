@@ -38,6 +38,19 @@ services:
       - CRATE_HEAP_SIZE=2g # see https://crate.io/docs/crate/howtos/en/latest/deployment/containers/docker.html#troubleshooting
     volumes:
       - crate-db:/data
+#grafana
+  grafana:
+      image: grafana/grafana:8.5.27
+      container_name: grafana
+      depends_on:
+        - crate-db
+      ports:
+        - "3003:3000"
+      environment:
+        - GF_INSTALL_PLUGINS=orchestracities-map-panel,grafana-clock-panel,grafana-worldmap-panel
+      volumes:
+        - grafana:/var/lib/grafana
 
 volumes:
   crate-db:
+  grafana:
