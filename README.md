@@ -5,6 +5,10 @@ This is a project to implement an AI on Edge application with FIWARE.
 ### Architecture
 ![Architecture](/docs/architecture.png)
 
+### Smart Data Model
+
+This project utilizes the [WeatherObserved](https://fiware-datamodels.readthedocs.io/en/stable/Weather/WeatherObserved/doc/spec/index.html) smart data model. This standardized schema enables structured representation of weather observations, including key meteorological parameters (temperature, humidity, wind speed, atmospheric pressure) and geospatial-temporal data. 
+
 ### Prerequisites
 - Docker
 - Docker Compose
@@ -16,26 +20,71 @@ This is a project to implement an AI on Edge application with FIWARE.
 
 [**MongoDB**](https://www.mongodb.com/) is used by the Orion Context Broker to hold context data information such as data entities, subscriptions and registrations.
 
-To test if the Context Broker service is running correctly, send a GET request to the Context Broker's version endpoint, which should return version information if the service is up and running:
+- To test if the Context Broker service is running correctly, send a POST request to the Context Broker to create a new entity of the WeatherObserved data model:
 
 ```bash 
-curl http://localhost:1026/version
+curl -iX POST 'localhost:1026/ngsi-ld/v1/entities' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "id": "urn:ngsi-ld:WeatherObserved:Berlin-2024-07-15T06:26:00",
+    "type": "WeatherObserved",
+    "dateObserved": {
+      "type": "Property",
+      "value": "2024-07-15T06:26:00Z"
+    },
+    "location": {
+      "type": "GeoProperty",
+      "value": {
+        "type": "Point",
+        "coordinates": [13.41053, 52.52437]
+      }
+    },
+    "address": {
+      "type": "Property",
+      "value": {
+        "addressCountry": "DE",
+        "addressLocality": "Berlin"
+      }
+    },
+    "temperature": {
+      "type": "Property",
+      "value": 18
+    },
+    "relativeHumidity": {
+      "type": "Property",
+      "value": 0.80
+    },
+    "precipitation": {
+      "type": "Property",
+      "value": 0.1
+    },
+    "windSpeed": {
+      "type": "Property",
+      "value": 3.5
+    },
+    "windDirection": {
+      "type": "Property",
+      "value": 150
+    },
+    "atmosphericPressure": {
+      "type": "Property",
+      "value": 1015
+    },
+    "weatherType": {
+      "type": "Property",
+      "value": "Partly cloudy"
+    },
+    "source": {
+      "type": "Property",
+      "value": "https://www.weatherapi.com"
+    }
+  }'
 ```
-If the Context Broker is running correctly, you should receive a response similar to this:
-
-```json
-{
-  "orionld version": "post-v1.5.1",
-  "orion version":   "1.15.0-next",
-  "uptime":          "0 d, 0 h, 15 m, 30 s",
-  "git_hash":        "2c3d73c9ceafac5acbb726bd2c87d345998c7fa2",
-  "compile_time":    "Wed Jun 5 22:23:13 UTC 2024",
-  "compiled_by":     "root",
-  "compiled_in":     "",
-  "release_date":    "Wed Jun 5 22:23:13 UTC 2024",
-  "doc":             "https://fiware-orion.readthedocs.org/en/master/"
-}
+- Query the Context Broker:
+```bash
+curl -iX GET 'localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:WeatherObserved:Berlin-2024-07-15T06:26:00'
 ```
+If the entity is correctly created, you should have as a result an entity of type WeatherObserved created in the Context Broker.
 
 
 
